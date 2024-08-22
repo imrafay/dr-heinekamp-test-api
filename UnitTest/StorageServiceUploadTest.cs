@@ -43,9 +43,9 @@ public class StorageServiceUploadTests
     public async Task UploadFilesAsync_UploadsFilesAndPreviewsSuccessfully()
     {
         // Arrange
-        var fileContent = "File content";
-        var fileName = "testfile.txt";
-        var previewContent = "Preview content";
+        var fileContent = "File";
+        var fileName = "testfile.pdf";
+        var previewContent = "Preview";
         var previewFileName = "testfile_preview.png";
 
         var files = new List<IFormFile> { SetupMockFormFile(fileName, fileContent) };

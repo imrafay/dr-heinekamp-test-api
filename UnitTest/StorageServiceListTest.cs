@@ -14,13 +14,13 @@ namespace DrHeinekamp_Project.Tests
 {
     public class StorageServiceTests
     {
-        private readonly Mock<IAmazonS3> _mockS3Client;
+        private readonly Mock<IAmazonS3> _awsBucketClient;
         private readonly Mock<IUrlGeneratorService> _mockUrlGeneratorService;
         private readonly IStorageService _storageService;
 
         public StorageServiceTests()
         {
-            _mockS3Client = new Mock<IAmazonS3>();
+            _awsBucketClient = new Mock<IAmazonS3>();
             _mockUrlGeneratorService = new Mock<IUrlGeneratorService>();
 
             var awsOptions = Options.Create(new AWSOptions
@@ -32,7 +32,7 @@ namespace DrHeinekamp_Project.Tests
             });
 
             _storageService = new StorageService(
-                awsBucketClient: _mockS3Client.Object,
+                awsBucketClient: _awsBucketClient.Object,
                 options:awsOptions,
                 urlGeneratorService:_mockUrlGeneratorService.Object);
         }
@@ -47,7 +47,7 @@ namespace DrHeinekamp_Project.Tests
                 new S3Object { Key = "document2.docx", LastModified = DateTime.UtcNow.AddDays(-2) }
             };
 
-            _mockS3Client.Setup(s3 => s3.ListObjectsV2Async(It.IsAny<ListObjectsV2Request>(), default))
+            _awsBucketClient.Setup(s3 => s3.ListObjectsV2Async(It.IsAny<ListObjectsV2Request>(), default))
                          .ReturnsAsync(new ListObjectsV2Response { S3Objects = s3Objects });
 
             _mockUrlGeneratorService.Setup(s => s.GeneratePermanentUrl(It.IsAny<string>()))
@@ -71,7 +71,7 @@ namespace DrHeinekamp_Project.Tests
         public async Task GetList_ReturnsEmptyDocumentListWhenNoDocuments()
         {
             // Arrange
-            _mockS3Client.Setup(s3 => s3.ListObjectsV2Async(It.IsAny<ListObjectsV2Request>(), default))
+            _awsBucketClient.Setup(s3 => s3.ListObjectsV2Async(It.IsAny<ListObjectsV2Request>(), default))
                          .ReturnsAsync(new ListObjectsV2Response { S3Objects = new List<S3Object>() });
 
             // Act
@@ -87,14 +87,14 @@ namespace DrHeinekamp_Project.Tests
         public async Task GetList_ExcludesPreviewFilesFromDocumentList()
         {
             // Arrange
-            var s3Objects = new List<S3Object>
+            var bucket = new List<S3Object>
             {
                 new S3Object { Key = "document1.pdf", LastModified = DateTime.UtcNow.AddDays(-1) },
                 new S3Object { Key = "document1_preview.png", LastModified = DateTime.UtcNow.AddDays(-1) }
             };
 
-            _mockS3Client.Setup(s3 => s3.ListObjectsV2Async(It.IsAny<ListObjectsV2Request>(), default))
-                         .ReturnsAsync(new ListObjectsV2Response { S3Objects = s3Objects });
+            _awsBucketClient.Setup(s3 => s3.ListObjectsV2Async(It.IsAny<ListObjectsV2Request>(), default))
+                         .ReturnsAsync(new ListObjectsV2Response { S3Objects = bucket });
 
             _mockUrlGeneratorService.Setup(s => s.GeneratePermanentUrl(It.IsAny<string>()))
                                     .Returns((string key) => $"https://mock-bucket.s3.amazonaws.com/{key}");

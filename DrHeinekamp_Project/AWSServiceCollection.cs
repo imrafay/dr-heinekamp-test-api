@@ -10,10 +10,8 @@ public static class AWSServiceCollection
 {
     public static IServiceCollection AddAwsServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Configure AWS options
         services.Configure<AWSOptions>(configuration.GetSection("AWS"));
 
-        // Register IAmazonS3
         services.AddScoped<IAmazonS3>(sp =>
         {
             var awsOptions = sp.GetRequiredService<IOptions<AWSOptions>>().Value;
