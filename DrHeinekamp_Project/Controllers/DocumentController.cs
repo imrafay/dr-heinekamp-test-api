@@ -8,14 +8,14 @@ namespace DrHeinekamp_Project.Controllers
     [Route("api/[controller]")]
     public class DocumentsController : ControllerBase
     {
-        private readonly IStorageService _service;
-        private readonly IStorageUploadService _storageUploadService;
-        private readonly IStorageDownloadService _storageDownloadService;
+        private readonly IDocumentService _service;
+        private readonly IDocumentUploadService _storageUploadService;
+        private readonly IDocumentDownloadService _storageDownloadService;
 
         public DocumentsController(
-            IStorageService service,
-            IStorageUploadService storageUploadService,
-            IStorageDownloadService storageDownloadService)
+            IDocumentService service,
+            IDocumentUploadService storageUploadService,
+            IDocumentDownloadService storageDownloadService)
         {
             _service = service;
             _storageUploadService = storageUploadService;

@@ -12,13 +12,13 @@ using DrHeinekamp_Project.Services.Interfaces;
 
 namespace DrHeinekamp_Project.Tests
 {
-    public class StorageServiceTests
+    public class DocumentServiceListTest
     {
         private readonly Mock<IAmazonS3> _awsBucketClient;
         private readonly Mock<IUrlGeneratorService> _mockUrlGeneratorService;
-        private readonly IStorageService _storageService;
+        private readonly IDocumentService _storageService;
 
-        public StorageServiceTests()
+        public DocumentServiceListTest()
         {
             _awsBucketClient = new Mock<IAmazonS3>();
             _mockUrlGeneratorService = new Mock<IUrlGeneratorService>();
@@ -31,7 +31,7 @@ namespace DrHeinekamp_Project.Tests
                 BucketName = "test-bucket"
             });
 
-            _storageService = new StorageService(
+            _storageService = new DocumentService(
                 awsBucketClient: _awsBucketClient.Object,
                 options:awsOptions,
                 urlGeneratorService:_mockUrlGeneratorService.Object);

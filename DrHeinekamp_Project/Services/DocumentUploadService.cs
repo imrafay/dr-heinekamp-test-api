@@ -3,12 +3,12 @@ using Amazon.S3;
 using DrHeinekamp_Project.Infrastructure;
 using DrHeinekamp_Project.Services.Interfaces;
 
-public class StorageUploadService : IStorageUploadService
+public class DocumentUploadService : IDocumentUploadService
 {
     private readonly IFileUploader _fileUploader;
     private readonly string _bucketName;
 
-    public StorageUploadService(IFileUploader fileUploader, string bucketName)
+    public DocumentUploadService(IFileUploader fileUploader, string bucketName)
     {
         _fileUploader = fileUploader;
         _bucketName = bucketName;

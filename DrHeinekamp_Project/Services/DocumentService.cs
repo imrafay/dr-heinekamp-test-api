@@ -10,13 +10,13 @@ using Microsoft.Extensions.Options;
 using System.IO.Compression;
 using System.Reflection.Metadata;
 
-public class StorageService: IStorageService
+public class DocumentService: IDocumentService
 {
     private readonly IAmazonS3 _awsBucketClient;
     private readonly IUrlGeneratorService _urlGeneratorService;
     private readonly string _bucketName;
 
-    public StorageService(
+    public DocumentService(
         IAmazonS3 awsBucketClient,
         IOptions<AWSOptions> options,
         IUrlGeneratorService urlGeneratorService)

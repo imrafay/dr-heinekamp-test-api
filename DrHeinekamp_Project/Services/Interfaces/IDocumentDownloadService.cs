@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DrHeinekamp_Project.Services.Interfaces
 {
-    public interface IStorageUploadService
+    public interface IDocumentDownloadService
     {
-        Task<List<string>> UploadFilesAsync(List<IFormFile> files, List<IFormFile> previews);
+        Task<Stream> DownloadFileAsync(string fileName);
+
+        Task<Stream> DownloadFilesAsync(List<string> fileNames);
     }
 }

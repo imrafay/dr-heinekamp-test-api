@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DrHeinekamp_Project.Services.Interfaces
 {
-    public interface IStorageService
+    public interface IDocumentService
     {
         Task<DocumentListOutput> GetListAsync();
         Task DeleteFileAsync(string fileName);

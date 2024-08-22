@@ -5,12 +5,12 @@ using DrHeinekamp_Project.Services.Interfaces;
 using Amazon.S3.Model;
 using System.IO.Compression;
 
-public class StorageDownloadService: IStorageDownloadService
+public class DocumentDownloadService: IDocumentDownloadService
 {
     private readonly IAmazonS3 _awsBucketClient;
     private readonly string _bucketName;
 
-    public StorageDownloadService(IAmazonS3 awsBucketClient, string bucketName)
+    public DocumentDownloadService(IAmazonS3 awsBucketClient, string bucketName)
     {
         _awsBucketClient = awsBucketClient;
         _bucketName = bucketName;

@@ -12,13 +12,13 @@ namespace DrHeinekamp_Project.Tests.Services
     public class StorageDownloadServiceTests
     {
         private readonly Mock<IAmazonS3> _mockS3Client;
-        private readonly StorageDownloadService _service;
+        private readonly DocumentDownloadService _service;
         private readonly string _bucketName = "test-bucket";
 
         public StorageDownloadServiceTests()
         {
             _mockS3Client = new Mock<IAmazonS3>();
-            _service = new StorageDownloadService(_mockS3Client.Object, _bucketName);
+            _service = new DocumentDownloadService(_mockS3Client.Object, _bucketName);
         }
 
         [Fact]

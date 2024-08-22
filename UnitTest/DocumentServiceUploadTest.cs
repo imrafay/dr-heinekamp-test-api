@@ -8,19 +8,19 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 
-public class StorageServiceUploadTests
+public class DocumentServiceUploadTest
 {
     private readonly Mock<IFileUploader> _mockFileUploader;
     private readonly Mock<IFormFile> _mockFile;
-    private readonly StorageUploadService _storageService;
+    private readonly DocumentUploadService _storageService;
     private readonly string _bucketName = "test-bucket";
 
-    public StorageServiceUploadTests()
+    public DocumentServiceUploadTest()
     {
         _mockFileUploader = new Mock<IFileUploader>();
         _mockFile = new Mock<IFormFile>();
 
-        _storageService = new StorageUploadService(
+        _storageService = new DocumentUploadService(
             _mockFileUploader.Object,
             _bucketName);
     }

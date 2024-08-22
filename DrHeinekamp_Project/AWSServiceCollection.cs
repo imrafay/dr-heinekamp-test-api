@@ -32,19 +32,19 @@ public static class AWSServiceCollection
 
         services.AddScoped<IFileUploader, FileUploader>();
 
-        services.AddScoped<IStorageUploadService>(sp =>
+        services.AddScoped<IDocumentUploadService>(sp =>
         {
             var fileUploader = sp.GetRequiredService<IFileUploader>();
             var awsOptions = sp.GetRequiredService<IOptions<AWSOptions>>().Value;
-            return new StorageUploadService(fileUploader, awsOptions.BucketName);
+            return new DocumentUploadService(fileUploader, awsOptions.BucketName);
         });
 
-        services.AddScoped<IStorageDownloadService>(sp =>
+        services.AddScoped<IDocumentDownloadService>(sp =>
         {
             var awsOptions = sp.GetRequiredService<IOptions<AWSOptions>>().Value;
-            return new StorageDownloadService(sp.GetRequiredService<IAmazonS3>(), awsOptions.BucketName);
+            return new DocumentDownloadService(sp.GetRequiredService<IAmazonS3>(), awsOptions.BucketName);
         });
-        services.AddScoped<IStorageService, StorageService>();
+        services.AddScoped<IDocumentService, DocumentService>();
 
         return services;
     }
