@@ -1,0 +1,6 @@
+@DrHeinekamp_Project_HostAddress = http://localhost:5049
+
+GET {{DrHeinekamp_Project_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
