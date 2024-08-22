@@ -26,7 +26,7 @@ public class StorageService: IStorageService
         _urlGeneratorService = urlGeneratorService;
     }
 
-    public async Task<DocumentListOutput> GetList()
+    public async Task<DocumentListOutput> GetListAsync()
     {
         var output = new DocumentListOutput();
 

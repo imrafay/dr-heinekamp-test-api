@@ -8,7 +8,7 @@ namespace DrHeinekamp_Project.Services.Interfaces
 {
     public interface IStorageService
     {
-        Task<DocumentListOutput> GetList();
+        Task<DocumentListOutput> GetListAsync();
         Task DeleteFileAsync(string fileName);
     }
 }

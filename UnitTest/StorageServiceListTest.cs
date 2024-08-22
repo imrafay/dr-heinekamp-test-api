@@ -57,7 +57,7 @@ namespace DrHeinekamp_Project.Tests
                                     .Returns((string key, DateTime expirationTime) => $"https://mock-bucket.s3.amazonaws.com/{key}?expires={expirationTime}");
 
             // Act
-            var result = await _storageService.GetList();
+            var result = await _storageService.GetListAsync();
 
             // Assert
             Assert.NotNull(result);
@@ -75,7 +75,7 @@ namespace DrHeinekamp_Project.Tests
                          .ReturnsAsync(new ListObjectsV2Response { S3Objects = new List<S3Object>() });
 
             // Act
-            var result = await _storageService.GetList();
+            var result = await _storageService.GetListAsync();
 
             // Assert
             Assert.NotNull(result);
@@ -103,7 +103,7 @@ namespace DrHeinekamp_Project.Tests
                                     .Returns((string key, DateTime expirationTime) => $"https://mock-bucket.s3.amazonaws.com/{key}?expires={expirationTime}");
 
             // Act
-            var result = await _storageService.GetList();
+            var result = await _storageService.GetListAsync();
 
             // Assert
             Assert.NotNull(result);

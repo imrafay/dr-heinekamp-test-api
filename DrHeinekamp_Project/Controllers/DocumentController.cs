@@ -32,7 +32,7 @@ namespace DrHeinekamp_Project.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetList()
         {
-            var files = await _service.GetList();
+            var files = await _service.GetListAsync();
             return Ok(files);
         }
 
