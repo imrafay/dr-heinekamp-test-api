@@ -1,5 +1,5 @@
 using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
-using DrHeinekamp_Project.Services;
+using DrHeinekamp_Project.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DrHeinekamp_Project.Controllers
@@ -10,17 +10,22 @@ namespace DrHeinekamp_Project.Controllers
     {
         private readonly IStorageService _service;
         private readonly IStorageUploadService _storageUploadService;
+        private readonly IStorageDownloadService _storageDownloadService;
 
-        public DocumentsController(IStorageService service, IStorageUploadService storageUploadService)
+        public DocumentsController(
+            IStorageService service,
+            IStorageUploadService storageUploadService,
+            IStorageDownloadService storageDownloadService)
         {
             _service = service;
             _storageUploadService = storageUploadService;
+            _storageDownloadService = storageDownloadService;
         }
 
         [HttpGet("download/{fileName}")]
         public async Task<IActionResult> Download(string fileName)
         {
-            var fileStream = await _service.DownloadFileAsync(fileName);
+            var fileStream = await _storageDownloadService.DownloadFileAsync(fileName);
             return File(fileStream, "application/octet-stream", fileName);
         }
 
@@ -46,7 +51,7 @@ namespace DrHeinekamp_Project.Controllers
                 return BadRequest("No files specified for download.");
             }
 
-            var stream = await _service.DownloadFilesAsync(fileNames);
+            var stream = await _storageDownloadService.DownloadFilesAsync(fileNames);
 
             return File(stream, "application/zip", "documents.zip");
         }

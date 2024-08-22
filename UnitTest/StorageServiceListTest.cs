@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
-using DrHeinekamp_Project.Services;
 using DrHeinekamp_Project.DTOs;
 using System;
 using DrHeinekamp_Project.Helper;
 using Microsoft.Extensions.Options;
+using DrHeinekamp_Project.Services.Interfaces;
 
 namespace DrHeinekamp_Project.Tests
 {

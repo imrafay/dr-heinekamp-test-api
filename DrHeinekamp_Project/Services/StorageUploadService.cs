@@ -1,7 +1,7 @@
 ﻿using Amazon.S3.Transfer;
 using Amazon.S3;
 using DrHeinekamp_Project.Infrastructure;
-using DrHeinekamp_Project.Services;
+using DrHeinekamp_Project.Services.Interfaces;
 
 public class StorageUploadService : IStorageUploadService
 {

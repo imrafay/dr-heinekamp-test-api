@@ -3,6 +3,7 @@ using Amazon.S3.Transfer;
 using DrHeinekamp_Project.Helper;
 using DrHeinekamp_Project.Infrastructure;
 using DrHeinekamp_Project.Services;
+using DrHeinekamp_Project.Services.Interfaces;
 using Microsoft.Extensions.Options;
 
 public static class AWSServiceCollection
@@ -40,6 +41,11 @@ public static class AWSServiceCollection
             return new StorageUploadService(fileUploader, awsOptions.BucketName);
         });
 
+        services.AddScoped<IStorageDownloadService>(sp =>
+        {
+            var awsOptions = sp.GetRequiredService<IOptions<AWSOptions>>().Value;
+            return new StorageDownloadService(sp.GetRequiredService<IAmazonS3>(), awsOptions.BucketName);
+        });
         services.AddScoped<IStorageService, StorageService>();
 
         return services;

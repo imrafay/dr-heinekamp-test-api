@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace DrHeinekamp_Project.Services
+namespace DrHeinekamp_Project.Services.Interfaces
 {
     public interface IStorageUploadService
     {

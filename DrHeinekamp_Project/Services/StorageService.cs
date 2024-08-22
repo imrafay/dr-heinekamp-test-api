@@ -3,7 +3,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using DrHeinekamp_Project.DTOs;
 using DrHeinekamp_Project.Helper;
-using DrHeinekamp_Project.Services;
+using DrHeinekamp_Project.Services.Interfaces;
 using DrHeinekamp_Project.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -64,100 +64,6 @@ public class StorageService: IStorageService
         output.DocumentsCount = documents.Count;
 
         return output;
-    }
-
-    public async Task<List<string>> UploadFilesAsync(
-    [FromForm] List<IFormFile> files,
-    [FromForm] List<IFormFile> previews)
-    {
-        if (files.Count != previews.Count)
-        {
-            throw new ArgumentException("The number of files and previews must match.");
-        }
-
-        var fileTransferUtility = new TransferUtility(_awsBucketClient);
-        var uploadTasks = new List<Task>();
-        var urls = new List<string>();
-
-        for (int i = 0; i < files.Count; i++)
-        {
-            var file = files[i];
-            var preview = previews[i];
-
-            var fileUploadRequest = new TransferUtilityUploadRequest
-            {
-                InputStream = file.OpenReadStream(),
-                Key = file.FileName,
-                BucketName = _bucketName,
-                CannedACL = S3CannedACL.Private
-            };
-
-            var previewUploadRequest = new TransferUtilityUploadRequest
-            {
-                InputStream = preview.OpenReadStream(),
-                Key = preview.FileName,
-                BucketName = _bucketName,
-                CannedACL = S3CannedACL.Private
-            };
-
-            uploadTasks.Add(fileTransferUtility.UploadAsync(fileUploadRequest));
-            uploadTasks.Add(fileTransferUtility.UploadAsync(previewUploadRequest));
-
-            string encodedFileName = Uri.EscapeDataString(file.FileName);
-            urls.Add($"https://{_bucketName}.s3.amazonaws.com/{encodedFileName}");
-        }
-
-        await Task.WhenAll(uploadTasks);
-
-        return urls;
-    }
-
-    public async Task<Stream> DownloadFileAsync(string fileName)
-    {
-        var request = new GetObjectRequest
-        {
-            BucketName = _bucketName,
-            Key = fileName
-        };
-
-        using (var response = await _awsBucketClient.GetObjectAsync(request))
-        {
-            var memoryStream = new MemoryStream();
-            await response.ResponseStream.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-            return memoryStream;
-        }
-    }
-
-    public async Task<Stream> DownloadFilesAsync(List<string> fileNames)
-    {
-        var memoryStream = new MemoryStream();
-        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
-        {
-            foreach (var fileName in fileNames)
-            {
-                var request = new GetObjectRequest
-                {
-                    BucketName = _bucketName,
-                    Key = fileName
-                };
-
-                using (var response = await _awsBucketClient.GetObjectAsync(request))
-                {
-                    if (response.ContentLength > 0)
-                    {
-                        var entry = archive.CreateEntry(fileName, CompressionLevel.Fastest);
-                        using (var entryStream = entry.Open())
-                        {
-                            await response.ResponseStream.CopyToAsync(entryStream);
-                        }
-                    }
-                }
-            }
-        }
-
-        memoryStream.Position = 0;
-        return memoryStream;
     }
 
     public async Task DeleteFileAsync(string fileName)

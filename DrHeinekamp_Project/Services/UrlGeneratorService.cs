@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using DrHeinekamp_Project.Services.Interfaces;
 using System;
 
 namespace DrHeinekamp_Project.Services
