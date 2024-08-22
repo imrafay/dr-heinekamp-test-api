@@ -35,8 +35,8 @@ public class DocumentDownloadService: IDocumentDownloadService
 
     public async Task<Stream> DownloadFilesAsync(List<string> fileNames)
     {
-        var memoryStream = new MemoryStream();
-        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+        var stream = new MemoryStream();
+        using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, true))
         {
             foreach (var fileName in fileNames)
             {
@@ -50,8 +50,8 @@ public class DocumentDownloadService: IDocumentDownloadService
                 {
                     if (response.ContentLength > 0)
                     {
-                        var entry = archive.CreateEntry(fileName, CompressionLevel.Fastest);
-                        using (var entryStream = entry.Open())
+                        var file = zip.CreateEntry(fileName, CompressionLevel.Fastest);
+                        using (var entryStream = file.Open())
                         {
                             await response.ResponseStream.CopyToAsync(entryStream);
                         }
@@ -60,7 +60,7 @@ public class DocumentDownloadService: IDocumentDownloadService
             }
         }
 
-        memoryStream.Position = 0;
-        return memoryStream;
+        stream.Position = 0;
+        return stream;
     }
 }

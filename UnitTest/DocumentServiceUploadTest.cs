@@ -27,7 +27,7 @@ public class DocumentServiceUploadTest
 
 
     [Fact]
-    public async Task UploadFilesAsync_ThrowsArgumentException_WhenFileAndPreviewCountMismatch()
+    public async Task UploadFilesAsync_WhenFileAndPreviewCountMismatch()
     {
         // Arrange
         var files = new List<IFormFile> { _mockFile.Object };
@@ -36,7 +36,7 @@ public class DocumentServiceUploadTest
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
             () => _storageService.UploadFilesAsync(files, previews));
-        Assert.Equal("The number of files and previews must match.", exception.Message);
+        Assert.Equal("Files and previews count must match.", exception.Message);
     }
 
     [Fact]
@@ -44,12 +44,18 @@ public class DocumentServiceUploadTest
     {
         // Arrange
         var fileContent = "File";
-        var fileName = "testfile.pdf";
-        var previewContent = "Preview";
-        var previewFileName = "testfile_preview.png";
+        var fileName = "file.pdf";
+        var preview = "Preview";
+        var previewFile = "file_preview.png";
 
-        var files = new List<IFormFile> { SetupMockFormFile(fileName, fileContent) };
-        var previews = new List<IFormFile> { SetupMockFormFile(previewFileName, previewContent) };
+        var files = new List<IFormFile> 
+        { 
+            MockFormFile(fileName, fileContent) 
+        };
+        var previews = new List<IFormFile>
+        { 
+            MockFormFile(previewFile, preview) 
+        };
 
         _mockFileUploader.Setup(tu => tu.UploadAsync(It.IsAny<TransferUtilityUploadRequest>()))
                          .Returns(Task.CompletedTask)
@@ -61,12 +67,14 @@ public class DocumentServiceUploadTest
         // Assert
         Assert.Single(result);
         Assert.Equal($"https://{_bucketName}.s3.amazonaws.com/{Uri.EscapeDataString(fileName)}", result[0]);
-        _mockFileUploader.Verify(tu => tu.UploadAsync(It.Is<TransferUtilityUploadRequest>(r => r.Key == fileName)), Times.Once);
-        _mockFileUploader.Verify(tu => tu.UploadAsync(It.Is<TransferUtilityUploadRequest>(r => r.Key == previewFileName)), Times.Once);
+        _mockFileUploader
+            .Verify(x => x.UploadAsync(It.Is<TransferUtilityUploadRequest>(r => r.Key == fileName)), Times.Once);
+        _mockFileUploader
+            .Verify(x => x.UploadAsync(It.Is<TransferUtilityUploadRequest>(r => r.Key == previewFile)), Times.Once);
     }
 
     [Fact]
-    public async Task UploadFilesAsync_ReturnsEmptyList_WhenNoFilesProvided()
+    public async Task UploadFilesAsync_WhenNoFilesProvided()
     {
         // Arrange
         var files = new List<IFormFile>();
@@ -80,7 +88,7 @@ public class DocumentServiceUploadTest
         _mockFileUploader.Verify(tu => tu.UploadAsync(It.IsAny<TransferUtilityUploadRequest>()), Times.Never);
     }
 
-    private IFormFile SetupMockFormFile(string fileName, string content)
+    private IFormFile MockFormFile(string fileName, string content)
     {
         var stream = new MemoryStream();
         var writer = new StreamWriter(stream);
@@ -89,9 +97,9 @@ public class DocumentServiceUploadTest
         stream.Position = 0;
 
         var mockFile = new Mock<IFormFile>();
-        mockFile.Setup(f => f.OpenReadStream()).Returns(stream);
-        mockFile.Setup(f => f.FileName).Returns(fileName);
-        mockFile.Setup(f => f.Length).Returns(stream.Length);
+        mockFile.Setup(x => x.OpenReadStream()).Returns(stream);
+        mockFile.Setup(x => x.FileName).Returns(fileName);
+        mockFile.Setup(x => x.Length).Returns(stream.Length);
 
         return mockFile.Object;
     }

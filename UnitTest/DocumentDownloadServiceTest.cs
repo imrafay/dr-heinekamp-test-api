@@ -25,39 +25,36 @@ namespace DrHeinekamp_Project.Tests.Services
         public async Task DownloadFilesAsync_ReturnsZip_WithCorrectFiles()
         {
             // Arrange
-            var fileNames = new List<string> { "file1.txt", "file2.txt" };
-
-            // Create mock response streams for each file
-            var mockResponseStreams = new Dictionary<string, MemoryStream>
+            var files = new List<string> { "file1.txt", "file2.txt" };
+            var mockstreams = new Dictionary<string, MemoryStream>
             {
                 { "file1.txt", CreateMockStream("file1 content") },
                 { "file2.txt", CreateMockStream("file2 content") }
             };
-
-            foreach (var fileName in fileNames)
+            foreach (var fileName in files)
             {
                 _mockS3Client.Setup(s => s.GetObjectAsync(It.Is<GetObjectRequest>(r => r.Key == fileName), default))
                              .ReturnsAsync(new GetObjectResponse
                              {
-                                 ResponseStream = mockResponseStreams[fileName],
-                                 ContentLength = mockResponseStreams[fileName].Length
+                                 ResponseStream = mockstreams[fileName],
+                                 ContentLength = mockstreams[fileName].Length
                              });
             }
 
             // Act
-            var result = await _service.DownloadFilesAsync(fileNames);
+            var result = await _service.DownloadFilesAsync(files);
 
             // Assert
             Assert.NotNull(result);
             Assert.IsType<MemoryStream>(result);
 
-            using (var zipArchive = new ZipArchive(result, ZipArchiveMode.Read))
+            using (var zip = new ZipArchive(result, ZipArchiveMode.Read))
             {
-                Assert.NotEmpty(zipArchive.Entries);
-                Assert.Equal(fileNames.Count, zipArchive.Entries.Count);
-                foreach (var fileName in fileNames)
+                Assert.NotEmpty(zip.Entries);
+                Assert.Equal(files.Count, zip.Entries.Count);
+                foreach (var fileName in files)
                 {
-                    var entry = zipArchive.GetEntry(fileName);
+                    var entry = zip.GetEntry(fileName);
                     Assert.NotNull(entry);
 
                     using (var entryStream = entry.Open())
@@ -73,11 +70,11 @@ namespace DrHeinekamp_Project.Tests.Services
         [Fact]
         public async Task DownloadFilesAsync_ReturnsEmptyZip_WithNoFiles()
         {
-            // Arrange``
-            var fileNames = new List<string>();
+            // Arrange
+            var files = new List<string>();
 
             // Act
-            var result = await _service.DownloadFilesAsync(fileNames);
+            var result = await _service.DownloadFilesAsync(files);
 
             // Assert
             Assert.NotNull(result);

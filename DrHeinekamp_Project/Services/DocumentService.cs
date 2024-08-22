@@ -42,11 +42,11 @@ public class DocumentService: IDocumentService
         {
             if (!document.Key.EndsWith(Constants.FileTypes.PreviewSuffix))
             {
-                var previewFileName = $"{Path.GetFileNameWithoutExtension(document.Key)}{Constants.FileTypes.PreviewSuffix}";
-                var previewObject = awsDocuments
-                    .FirstOrDefault(x => x.Key.Equals(previewFileName, StringComparison.OrdinalIgnoreCase));
+                var previewFile = $"{Path.GetFileNameWithoutExtension(document.Key)}{Constants.FileTypes.PreviewSuffix}";
+                var preview = awsDocuments
+                    .FirstOrDefault(x => x.Key.Equals(previewFile, StringComparison.OrdinalIgnoreCase));
 
-                var previewUrl = previewObject != null ? _urlGeneratorService.GeneratePermanentUrl(previewFileName) : null;
+                var previewUrl = preview != null ? _urlGeneratorService.GeneratePermanentUrl(previewFile) : null;
                 var expirationTime = document.LastModified.AddHours(1);
                 documents.Add(new DocumentInfo
                 {
@@ -67,6 +67,13 @@ public class DocumentService: IDocumentService
     }
 
     public async Task DeleteFileAsync(string fileName)
+    {
+        await DeleteFileFromBucketAsync(fileName);
+        var previewFileName = Path.GetFileNameWithoutExtension(fileName) + Constants.FileTypes.PreviewSuffix;
+        await DeleteFileFromBucketAsync(previewFileName);
+    }
+
+    private async Task DeleteFileFromBucketAsync(string fileName)
     {
         var deleteObjectRequest = new DeleteObjectRequest
         {

@@ -21,7 +21,7 @@ public class DocumentUploadService : IDocumentUploadService
             throw new ArgumentException("Files and previews count must match.");
         }
 
-        var uploadTasks = new List<Task>();
+        var tasks = new List<Task>();
         var urls = new List<string>();
 
         for (int i = 0; i < files.Count; i++)
@@ -29,7 +29,7 @@ public class DocumentUploadService : IDocumentUploadService
             var file = files[i];
             var preview = previews[i];
 
-            var fileUploadRequest = new TransferUtilityUploadRequest
+            var fileUpload = new TransferUtilityUploadRequest
             {
                 InputStream = file.OpenReadStream(),
                 Key = file.FileName,
@@ -37,7 +37,7 @@ public class DocumentUploadService : IDocumentUploadService
                 CannedACL = S3CannedACL.Private
             };
 
-            var previewUploadRequest = new TransferUtilityUploadRequest
+            var previewUpload = new TransferUtilityUploadRequest
             {
                 InputStream = preview.OpenReadStream(),
                 Key = preview.FileName,
@@ -45,14 +45,14 @@ public class DocumentUploadService : IDocumentUploadService
                 CannedACL = S3CannedACL.Private
             };
 
-            uploadTasks.Add(_fileUploader.UploadAsync(fileUploadRequest));
-            uploadTasks.Add(_fileUploader.UploadAsync(previewUploadRequest));
+            tasks.Add(_fileUploader.UploadAsync(fileUpload));
+            tasks.Add(_fileUploader.UploadAsync(previewUpload));
 
             string encodedFileName = Uri.EscapeDataString(file.FileName);
             urls.Add($"https://{_bucketName}.s3.amazonaws.com/{encodedFileName}");
         }
 
-        await Task.WhenAll(uploadTasks);
+        await Task.WhenAll(tasks);
 
         return urls;
     }
