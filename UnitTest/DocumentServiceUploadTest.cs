@@ -31,7 +31,7 @@ public class DocumentServiceUploadTest
     {
         // Arrange
         var files = new List<IFormFile> { _mockFile.Object };
-        var previews = new List<IFormFile>(); // No preview files
+        var previews = new List<IFormFile>(); 
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
@@ -80,7 +80,6 @@ public class DocumentServiceUploadTest
         _mockFileUploader.Verify(tu => tu.UploadAsync(It.IsAny<TransferUtilityUploadRequest>()), Times.Never);
     }
 
-    // Helper method to set up mock IFormFile
     private IFormFile SetupMockFormFile(string fileName, string content)
     {
         var stream = new MemoryStream();

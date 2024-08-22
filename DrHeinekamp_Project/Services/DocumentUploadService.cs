@@ -18,7 +18,7 @@ public class DocumentUploadService : IDocumentUploadService
     {
         if (files.Count != previews.Count)
         {
-            throw new ArgumentException("The number of files and previews must match.");
+            throw new ArgumentException("Files and previews count must match.");
         }
 
         var uploadTasks = new List<Task>();
